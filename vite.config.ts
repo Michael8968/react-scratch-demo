@@ -7,4 +7,5 @@ export default defineConfig({
   optimizeDeps: {
     include: ['scratch-gui'],
   },
+  base: '/react-scratch-demo/',
 })
