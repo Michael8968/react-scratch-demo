@@ -11,7 +11,7 @@ function App() {
     <div className="app">
       <main>
         {mode === "editor" ? (
-          <iframe src="/scratch/index.html" />
+          <iframe src="/react-scratch-demo/scratch/index.html" />
         ) : projectId ? (
          <ScratchPlayer projectId={projectId } />
         ) : (
