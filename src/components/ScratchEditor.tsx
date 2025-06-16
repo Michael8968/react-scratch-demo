@@ -1,13 +1,20 @@
-import React from 'react';
-import ScratchGUI from 'scratch-gui';
-import { Provider } from 'react-redux';
-import store from 'scratch-gui/redux/store';
+import * as React from 'react';
+import renderGUI from './render-gui';
 
-const ScratchEditor = () => (
-    <Provider store={store}>
-      <ScratchGUI />
-    </Provider>
-  );
-  
-  export default ScratchEditor;
-  
+const ScratchEditor = () => {
+    const appTarget = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        if (appTarget.current) {
+            renderGUI(appTarget.current);
+        }
+    }, []);
+
+    return (
+        <div>
+            <div ref={appTarget} />
+        </div>
+    );
+};
+
+export default ScratchEditor;
