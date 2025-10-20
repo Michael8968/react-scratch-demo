@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 // import ScratchEditor from './components/ScratchEditor';
 import ScratchPlayer from "./components/ScratchPlayer";
+import downloadBlob from './download-blob';
 
 import "./App.css";
 
@@ -19,42 +20,12 @@ function App() {
     }
   };
 
-  // 创建 .sb3 文件（ZIP 格式）
-  const createSb3File = (projectData: any) => {
-    // .sb3 文件实际上是一个 ZIP 文件，包含项目数据
-    // 这里我们创建一个简化的实现
-    const sb3Data = {
-      targets: projectData.targets || [],
-      monitors: projectData.monitors || [],
-      extensions: projectData.extensions || [],
-      meta: {
-        semver: "3.0.0",
-        vm: "0.2.0",
-        agent: "Mozilla/5.0"
-      }
-    };
-
-    // 将数据转换为 JSON 字符串
-    const jsonString = JSON.stringify(sb3Data, null, 2);
-    
-    // 创建 Blob 并下载
-    const blob = new Blob([jsonString], { type: 'application/zip' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `scratch-project-${Date.now()}.sb3`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   // 监听来自 iframe 的消息
   const handleMessage = (event: MessageEvent) => {
     if (event.data.type === 'PROJECT_EXPORTED') {
       // 处理导出的项目数据，创建 .sb3 文件
       const projectData = event.data.projectData;
-      createSb3File(projectData);
+    downloadBlob('scratch-project.sb3', projectData);
     }
   };
 
