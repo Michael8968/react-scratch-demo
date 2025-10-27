@@ -1,99 +1,66 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="google" value="notranslate">
-    <link rel="shortcut icon" href="static/favicon.ico">
-    <title>Scratch 3.0 GUI</title>
-  <script defer src="gui.js"></script></head>
-  <body>
-    
-  </body>
-  <script>
-   
-    // 监听来自父窗口的导出请求
-    window.addEventListener('message', function(event) {
-      if (event.data.type === 'EXPORT_PROJECT') {
-        // 尝试从 Scratch GUI 获取项目数据
-        console.log('GUI', window.vm.saveProjectSb3);
-        try {
-          // 检查 Scratch GUI 是否已加载
-          if (window.vm && window.vm.saveProjectSb3) {
-            // 使用 saveProjectSb3 方法获取项目数据
-            window.vm.saveProjectSb3().then(content => {
-              // 发送项目数据回父窗口
-              window.parent.postMessage({
-                type: 'PROJECT_EXPORTED',
-                projectData: content
-              }, '*');
-            }).catch(error => {
-              console.error('保存项目时出错:', error);
-              // 发送错误信息
-              window.parent.postMessage({
-                type: 'PROJECT_EXPORTED',
-                projectData: null,
-                error: error.message
-              }, '*');
-            });
-          } else {
-            // 如果 Scratch GUI 未加载，发送默认项目数据
-            const defaultProjectData = {
-              targets: [
-                {
-                  isStage: true,
-                  name: "Stage",
-                  variables: {},
-                  lists: {},
-                  broadcasts: {},
-                  blocks: {},
-                  comments: {},
-                  currentCostume: 0,
-                  costumes: [
-                    {
-                      assetId: "cd21514d0531fdffb222a4bd53063764",
-                      name: "背景1",
-                      bitmapResolution: 1,
-                      md5ext: "cd21514d0531fdffb222a4bd53063764.svg",
-                      dataFormat: "svg",
-                      rotationCenterX: 240,
-                      rotationCenterY: 180
-                    }
-                  ],
-                  sounds: [],
-                  volume: 100,
-                  layerOrder: 0,
-                  tempo: 60,
-                  videoTransparency: 50,
-                  videoState: "on",
-                  textToSpeechLanguage: null
-                }
-              ],
-              monitors: [],
-              extensions: [],
-              meta: {
-                semver: "3.0.0",
-                vm: "0.2.0",
-                agent: "Mozilla/5.0"
-              }
-            };
-            
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google" value="notranslate">
+  <link rel="shortcut icon" href="static/favicon.ico">
+  <title>Scratch 3.0 GUI</title>
+  <script defer src="gui.js"></script>
+</head>
+
+<body>
+
+</body>
+<script>
+  // 检查工作区是否为空的函数
+  function isProjectEmpty(vm) {
+    return vm.runtime.targets.every(target => {
+      return Object.keys(target.blocks._blocks).length === 0 && target.blocks._scripts.length === 0;
+    });
+  }
+  // 监听来自父窗口的消息
+  window.addEventListener('message', function (event) {
+    if (event.data.type === 'EXPORT_PROJECT') {
+      // 尝试从 Scratch GUI 获取项目数据
+      console.log('GUI', window.vm.saveProjectSb3);
+      try {
+        // 检查 Scratch GUI 是否已加载
+        if (window.vm && window.vm.saveProjectSb3) {
+          // 使用 saveProjectSb3 方法获取项目数据
+          window.vm.saveProjectSb3().then(content => {
+            // 检查工作区是否为空
+            const isEmpty = isProjectEmpty(window.vm);
+
+            // 发送项目数据回父窗口
             window.parent.postMessage({
               type: 'PROJECT_EXPORTED',
-              projectData: defaultProjectData
+              projectData: content,
+              isEmpty: isEmpty
             }, '*');
-          }
-        } catch (error) {
-          console.error('导出项目时出错:', error);
-          // 发送错误信息
-          window.parent.postMessage({
-            type: 'PROJECT_EXPORTED',
-            projectData: null,
-            error: error.message
-          }, '*');
+          }).catch(error => {
+            console.error('保存项目时出错:', error);
+            // 发送错误信息
+            window.parent.postMessage({
+              type: 'PROJECT_EXPORTED',
+              projectData: null,
+              error: error.message
+            }, '*');
+          });
         }
+      } catch (error) {
+        console.error('导出项目时出错:', error);
+        // 发送错误信息
+        window.parent.postMessage({
+          type: 'PROJECT_EXPORTED',
+          projectData: null,
+          error: error.message
+        }, '*');
       }
-    });
-  </script>
+    }
+  });
+</script>
+
 </html>
