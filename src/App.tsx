@@ -11,17 +11,17 @@ function App() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // 导出 Scratch 项目为 .sb3 文件
-  const handleExport = () => {
-    if (iframeRef.current) {
-      // 向 iframe 发送导出请求
-      iframeRef.current.contentWindow?.postMessage(
-        {
-          type: "EXPORT_PROJECT",
-        },
-        "*"
-      );
-    }
-  };
+//   const handleExport = () => {
+//     if (iframeRef.current) {
+//       // 向 iframe 发送导出请求
+//       iframeRef.current.contentWindow?.postMessage(
+//         {
+//           type: "EXPORT_PROJECT",
+//         },
+//         "*"
+//       );
+//     }
+//   };
 
   // 监听来自 iframe 的消息
   const handleMessage = (event: MessageEvent) => {
@@ -48,11 +48,11 @@ function App() {
       <main>
         {mode === "editor" ? (
           <div className="scratch-editor-container">
-            <div className="controls">
+            {/* <div className="controls">
               <button onClick={handleExport} className="export-btn">
                 导出 .sb3 文件
               </button>
-            </div>
+            </div> */}
             <iframe
               ref={iframeRef}
               src="/react-scratch-demo/scratch/index.html"
